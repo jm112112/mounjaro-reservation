@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>예약 조회</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Pretendard -->
+  <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Pretendard', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f3f4f6, #dfe7ff, #f5f1d6);
+    }
+
+    .wrapper { max-width: 500px; margin: 5px auto; padding: 0 16px; background: transparent; }
+
+    .card, .status-card {
+      background: rgba(255, 255, 255, 0.85);
+      padding: 25px 20px 30px;
+      border-top: 5px solid #F7C71B;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+      border-radius: 16px;
+    }
+
+    .status-header { display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 900; margin-bottom: 20px; color: #000; padding: 0; }
+    .status-header h2 { margin: 0; font-size: 14px; font-weight: 900; }
+    .badge { background: #efcfcf; color: #c75555; padding: 5px 10px; border-radius: 12px; font-size: 10px; flex-shrink: 0; }
+
+    .status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .status-item {
+      background: rgba(255,255,255,0.9);
+      border-radius: 15px;
+      padding: 15px;
+      border: 2px solid #eee;
+      transition: opacity 0.3s ease;
+    }
+
+    .top { display: flex; justify-content: space-between; font-size: 12px; }
+    .dose { padding: 5px 10px; border-radius: 20px; font-weight: bold; }
+    .count strong { font-size: 28px; color: #066cb7; }
+
+    .bar { height: 6px; background: #eee; margin-top: 10px; border-radius: 10px; }
+    .bar div { height: 100%; border-radius: 10px; }
+
+    .black { border-color: #83868D; }
+    .black .dose { background: #e3e4e5; color: #000; }
+    .black .bar div { background: #000; }
+
+    .purple { border-color: #85759a; }
+    .purple .dose { background: #D4CfDb; color: #402f5d; }
+    .purple .bar div { background: #402f5d; }
+
+    .green { border-color: #79b6af; }
+    .green .dose { background: #D2E6E4; color: #12786F; }
+    .green .bar div { background: #12786F; }
+
+    .pink { border-color: #c65a94; }
+    .pink .dose { background: #fbe1ef; color: #ae1467; }
+    .pink .bar div { background: #ae1467; }
+
+    .notice { margin-top: 15px; font-size: 12px; text-align: center; color: #666; background: #f3f4f6; padding: 10px; border-radius: 10px; }
+
+    .title { font-size: 14px; font-weight: 900; margin-bottom: 18px; color: #000; }
+    .label { font-size: 12px; font-weight: 600; margin-bottom: 8px; color: #000; }
+
+    input, select {
+      width: 100%;
+      padding: 16px;
+      margin-bottom: 20px;
+      border-radius: 16px;
+      border: 1.5px solid #d1d5db;
+      background: #fafafc;
+      font-size: 18px;
+      outline: none;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    input::placeholder, select::placeholder { color: #aab2bd; font-weight: 500; }
+    input:focus, select:focus { border: 1.5px solid #066cb7; background: #fff; }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      border-radius: 16px;
+      border: none;
+      background: #066cb7;
+      color: white;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:active { transform: scale(0.98); }
+    button:hover { background: #066cb7; }
+
+    .result { margin-top: 20px; font-size: 18px; font-weight: 700; text-align: center; color: #066cb7; }
+    .total { margin-top: 8px; text-align: center; font-size: 14px; color: #000; }
+
+    .header { background-color: transparent; padding: 20px 30px; border-bottom: 1px solid #e5e7eb; }
+    .header-container { display: flex; align-items: center; gap: 8px; justify-content: center; }
+    .logo-box { width: 50px; height: 50px; }
+    .logo-box img { width: 100%; height: 100%; object-fit: contain; }
+    .title-box h1 { margin: 0; font-size: 16px; font-weight: 900; color: #066cb7; }
+    .title-box p { margin: 4px 0 0; font-size: 12px; font-weight: 600; color: #6d6d6d; }
+  </style>
+</head>
+
+<body>
+  <header class="header">
+    <div class="header-container">
+      <div class="logo-box">
+        <img src="logo.png" alt="로고">
+      </div>
+      <div class="title-box">
+        <h1>새종로약국</h1>
+        <p>마운자로 예약 현황</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrapper">
+    <div class="card status-card">
+      <div class="status-header">
+        <h2>실시간 대기 현황</h2>
+        <span class="badge">방금 업데이트</span>
+      </div>
+
+      <div class="status-grid">
+        <div class="status-item black">
+          <div class="top"><span class="dose">2.5mg</span><span class="price">29만원</span></div>
+          <div class="count"><strong>0</strong> 명 대기중</div>
+          <div class="bar"><div></div></div>
+        </div>
+        <div class="status-item purple">
+          <div class="top"><span class="dose">5.0mg</span><span class="price">38만원</span></div>
+          <div class="count"><strong>0</strong> 명 대기중</div>
+          <div class="bar"><div></div></div>
+        </div>
+        <div class="status-item green">
+          <div class="top"><span class="dose">7.5mg</span><span class="price">53만원</span></div>
+          <div class="count"><strong>0</strong> 명 대기중</div>
+          <div class="bar"><div></div></div>
+        </div>
+        <div class="status-item pink">
+          <div class="top"><span class="dose">10.0mg</span><span class="price">53만원</span></div>
+          <div class="count"><strong>0</strong> 명 대기중</div>
+          <div class="bar"><div></div></div>
+        </div>
+      </div>
+
+      <div class="notice">💬 재고 입고 시 예약하신 번호로 문자를 발송해 드려요</div>
+    </div>
+
+    <div class="card">
+      <div class="title">예약 내역 조회</div>
+      <div class="label">용량 선택</div>
+      <select id="doseSelect">
+        <option value="2.5mg">2.5mg</option>
+        <option value="5.0mg">5.0mg</option>
+        <option value="7.5mg">7.5mg</option>
+        <option value="10.0mg">10.0mg</option>
+      </select>
+
+      <div class="label">예약번호</div>
+      <input type="text" id="reservation" placeholder="# 0000">
+
+      <div class="label">휴대폰 뒷 4자리</div>
+      <input type="text" id="phone" placeholder="1234">
+
+      <button onclick="check()">조회하기</button>
+      <div class="result" id="result"></div>
+      <div class="total" id="total"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
+
